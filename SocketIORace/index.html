@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+      #input:focus { outline: none; }
+      .form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages > li { padding: 0.5rem 1rem; }
+      #messages > li:nth-child(odd) { background: #efefef; }
+
+      #AEndpoint {position: absolute; width: 100px; height: 100px; background-color: crimson; top: 50px; left: 50px;}
+      #BEndpoint {position: absolute; width: 100px; height: 100px; background-color: blue; top: 250px; left: 500px;}
+      #playArea {background: grey; width: 650px; height: 400px;}
+      #teamA {position: absolute; width: 10px; height: 10px; background-color: darkred; left: 320px; top: 195px;}
+      #teamB {position: absolute; width: 10px; height: 10px; background-color: darkblue;left: 320px; top: 195px;}
+    </style>
+  </head>
+  <body>
+    <div id="playArea">
+        <span id="AEndpoint"></span>
+        <span id="BEndpoint"></span>
+        <span id="teamA"></span>
+        <span id="teamB"></span>
+    </div>
+    <div>
+      <form id="upForm" class="form" action="">
+        <button>Up</button>
+      </form>
+    </div>
+    <form id="downForm" class="form" action="">
+      <button>Down</button>
+    </form>
+    <form id="leftForm" class="form" action="">
+      <button>Left</button>
+    </form>
+    <form id="rightForm" class="form" action="">
+      <button>Right</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      var socket = io('localhost:4001');
+
+      var messages = document.getElementById('messages');
+      var upForm = document.getElementById('upForm');
+      var downForm = document.getElementById('downForm');
+      var leftForm = document.getElementById('leftForm');
+      var rightForm = document.getElementById('rightForm');
+      var input = document.getElementById('input');
+
+      upForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        socket.emit('teamAUp', null);
+      });
+
+      downForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        socket.emit('teamADown', null);
+      });
+
+      leftForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        socket.emit('teamALeft', null);
+      });
+
+      rightForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        socket.emit('teamARight', null);
+      });
+
+      socket.on('positionUpdate', function(data) {
+        console.log(data)
+        document.getElementById('teamA').style.left = data['teamAPos']['x'] + "px";
+        document.getElementById('teamA').style.top = data['teamAPos']['y'] + "px";
+        document.getElementById('teamB').style.left = data['teamBPos']['x'] + "px";
+        document.getElementById('teamB').style.top = data['teamBPos']['y'] + "px";
+      });
+    </script>
+  </body>
+</html>
